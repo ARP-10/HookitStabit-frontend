@@ -1,63 +1,91 @@
-import './App.css';
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-function App() {
+const App = () => {
   const [categorias, setCategorias] = useState([]);
   const [productos, setProductos] = useState([]);
-  const [isLoading, setIsLoading] = useState(true); // Estado para el indicador de carga
+  const [nuevoProducto, setNuevoProducto] = useState({
+    nombre: '',
+    precio: 0,
+    stock: 0,
+    categoria: { id: 0 }
+  });
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Fetch de categorías
+  // Función handleChange debe estar definida antes de su uso
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setNuevoProducto(prevState => ({
+      ...prevState,
+      [id]: value
+    }));
+  };
+
   const fetchCategorias = async () => {
     try {
-      const responseCategorias = await fetch('http://localhost:8080/api/categorias');
-      if (responseCategorias.ok) {
-        const dataCategorias = await responseCategorias.json();
-        setCategorias(dataCategorias);
-      } else {
-        console.error('Error en categorías:', responseCategorias.status);
-      }
+      const response = await fetch('http://localhost:8080/api/categorias');
+      const data = await response.json();
+      setCategorias(data);
     } catch (error) {
-      console.error('Error en el fetch de categorías:', error);
+      console.error("Error al cargar las categorías:", error);
     }
   };
 
-  // Fetch de productos
   const fetchProductos = async () => {
     try {
-      const responseProductos = await fetch('http://localhost:8080/api/productos');
-      if (responseProductos.ok) {
-        const dataProductos = await responseProductos.json();
-        setProductos(dataProductos);
-      } else {
-        console.error('Error en productos:', responseProductos.status);
-      }
+      const response = await fetch('http://localhost:8080/api/productos');
+      const data = await response.json();
+      setProductos(data);
     } catch (error) {
-      console.error('Error en el fetch de productos:', error);
+      console.error("Error al cargar los productos:", error);
     }
   };
 
-  // Llamar ambos fetch y actualizar estado de carga
-  const fetchData = async () => {
-    await Promise.all([fetchCategorias(), fetchProductos()]);
-    setIsLoading(false); // Indicar que la carga ha terminado
+  const crearProducto = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch('http://localhost:8080/api/productos', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(nuevoProducto),
+      });
+
+      if (response.ok) {
+        alert('Producto creado con éxito');
+        fetchProductos(); // Recargar productos
+      } else {
+        alert('Error al crear el producto');
+      }
+    } catch (error) {
+      console.error('Error al crear producto:', error);
+      alert('Error al conectar con el servidor');
+    }
   };
 
-  // useEffect para llamar fetchData
+  const fetchData = async () => {
+    try {
+      await Promise.all([fetchCategorias(), fetchProductos()]);
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Error al cargar los datos:", error);
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchData();
   }, []);
 
-  // Renderización de la interfaz
   return (
     <div className="App">
       {isLoading ? (
         <p>Cargando datos...</p>
       ) : (
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          {/* Sección de Categorías */}
           <div style={{ width: '45%' }}>
             <h1>Categorías</h1>
-            <p>Lista de categorías de la API:</p>
             <ul>
               {categorias.length > 0 ? (
                 categorias.map((categoria, index) => (
@@ -69,10 +97,8 @@ function App() {
             </ul>
           </div>
 
-          {/* Sección de Productos */}
           <div style={{ width: '45%' }}>
             <h1>Productos</h1>
-            <p>Lista de productos de la API:</p>
             <ul>
               {productos.length > 0 ? (
                 productos.map((producto, index) => (
@@ -83,29 +109,51 @@ function App() {
               )}
             </ul>
 
-            <form action="http://localhost:8080/api/productos" method="POST">
-            <p>Crear un producto</p>
-            <p>Nombre:</p>
-            <input type="text" id="nombre" placeholder="Nombre del producto" />
-            <p>Stock:</p>   
-            <input type="number" id="stock" placeholder="Stock del producto" />
-            <p>Precio:</p>  
-            <input type="number" id="precio" placeholder="Precio del producto" />
-            <p>Categoría:</p>   
-            <select id="categoriaId">
-              {categorias.map((categoria, index) => (
-                <option key={index} value={categoria.id}>{categoria.nombre}</option>
-              ))}
-            </select> 
-            <button type="submit" formAction="http://localhost:8080/api/productos" formMethod="POST">Crear Producto</button>
+            <form onSubmit={crearProducto}>
+              <p>Crear un producto</p>
+              <p>Nombre:</p>
+              <input
+                type="text"
+                id="nombre"
+                placeholder="Nombre del producto"
+                value={nuevoProducto.nombre}
+                onChange={handleChange}
+              />
+              <p>Stock:</p>
+              <input
+                type="number"
+                id="stock"
+                placeholder="Stock del producto"
+                value={nuevoProducto.stock}
+                onChange={handleChange}
+              />
+              <p>Precio:</p>
+              <input
+                type="number"
+                id="precio"
+                placeholder="Precio del producto"
+                value={nuevoProducto.precio}
+                onChange={handleChange}
+              />
+              <p>Categoría:</p>
+              <select
+                id="categoriaId"
+                value={nuevoProducto.categoria.id}
+                onChange={handleChange}
+              >
+                {categorias.map((categoria, index) => (
+                  <option key={index} value={categoria.id}>
+                    {categoria.nombre}
+                  </option>
+                ))}
+              </select>
+              <button type="submit">Crear Producto</button>
             </form>
-           
-
           </div>
         </div>
       )}
     </div>
   );
-}
+};
 
 export default App;
