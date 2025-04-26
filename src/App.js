@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom"; 
 import {
   Container,
   Typography,
@@ -18,11 +19,14 @@ import {
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import PersonIcon from "@mui/icons-material/Person";
 import Logo from "./assets/Logopeque.png";
+import ProductoDetalle from "./pages/producto_detalle"; 
 
-const App = () => {
+const Home = () => {
   const [categorias, setCategorias] = useState([]);
   const [productos, setProductos] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  const navigate = useNavigate(); 
 
   const fetchData = async () => {
     try {
@@ -53,31 +57,9 @@ const App = () => {
 
   return (
     <>
-      {/* Barra de navegación */}
-      <AppBar position="sticky" color="secondary">
-        <Toolbar>
-          {/* Logo de la app */}
-          <img src={Logo}  alt="Logo" style={{ height: 50, marginRight: 20 }} />
-          <Typography variant="h6" sx={{ flexGrow: 1 }}></Typography>
-
-          {/* Botones de carrito y perfil */}
-          <IconButton color="inherit">
-            <AddShoppingCartIcon />
-          </IconButton>
-          <IconButton color="inherit">
-            <PersonIcon />
-          </IconButton>
-        </Toolbar>
-      </AppBar>
-
       <Container sx={{ paddingTop: 4 }}>
         {isLoading ? (
-          <Grid
-            container
-            justifyContent="center"
-            alignItems="center"
-            style={{ minHeight: "80vh" }}
-          >
+          <Grid container justifyContent="center" alignItems="center" style={{ minHeight: "80vh" }}>
             <CircularProgress />
           </Grid>
         ) : (
@@ -86,12 +68,7 @@ const App = () => {
             <Typography variant="h4" gutterBottom>
               Categorías
             </Typography>
-            <Stack
-              direction="row"
-              spacing={2}
-              flexWrap="wrap"
-              sx={{ marginBottom: 4 }}
-            >
+            <Stack direction="row" spacing={2} flexWrap="wrap" sx={{ marginBottom: 4 }}>
               {categorias.length > 0 ? (
                 categorias.map((categoria, index) => (
                   <Chip
@@ -123,7 +100,6 @@ const App = () => {
                         flexDirection: "column",
                       }}
                     >
-                      {/* Imagen aleatoria */}
                       <CardMedia
                         component="img"
                         height="140"
@@ -143,9 +119,13 @@ const App = () => {
                         </Typography>
                       </CardContent>
 
-                      {/* Botones */}
                       <CardActions sx={{ justifyContent: "space-between" }}>
-                        <Button size="small" color="primary" variant="outlined">
+                        <Button
+                          size="small"
+                          color="primary"
+                          variant="outlined"
+                          onClick={() => navigate(`/producto/${producto.id}`)} // 👈
+                        >
                           Ver detalles
                         </Button>
                         <Button
@@ -153,7 +133,7 @@ const App = () => {
                           color="secondary"
                           variant="contained"
                           startIcon={<AddShoppingCartIcon />}
-                        ></Button>
+                        />
                       </CardActions>
                     </Card>
                   </Grid>
@@ -166,6 +146,30 @@ const App = () => {
         )}
       </Container>
     </>
+  );
+};
+
+const App = () => {
+  return (
+    <Router>
+      <AppBar position="sticky" color="secondary">
+        <Toolbar>
+          <img src={Logo} alt="Logo" style={{ height: 50, marginRight: 20 }} />
+          <Typography variant="h6" sx={{ flexGrow: 1 }}></Typography>
+          <IconButton color="inherit">
+            <AddShoppingCartIcon />
+          </IconButton>
+          <IconButton color="inherit">
+            <PersonIcon />
+          </IconButton>
+        </Toolbar>
+      </AppBar>
+
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/api/productos/:id" element={<ProductoDetalle />} />
+      </Routes>
+    </Router>
   );
 };
 
