@@ -1,75 +1,44 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
+import {
+  Container,
+  Typography,
+  CircularProgress,
+  Grid,
+  Stack,
+  Chip,
+  Card,
+  CardContent,
+  CardMedia,
+  Button,
+  CardActions,
+  AppBar,
+  Toolbar,
+  IconButton,
+} from "@mui/material";
+import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
+import PersonIcon from "@mui/icons-material/Person";
+import Logo from "./assets/Logopeque.png";
 
 const App = () => {
   const [categorias, setCategorias] = useState([]);
   const [productos, setProductos] = useState([]);
-  const [nuevoProducto, setNuevoProducto] = useState({
-    nombre: '',
-    precio: 0,
-    stock: 0,
-    categoria: { id: 0 }
-  });
   const [isLoading, setIsLoading] = useState(true);
-
-  // Función handleChange debe estar definida antes de su uso
-  const handleChange = (e) => {
-    const { id, value } = e.target;
-    setNuevoProducto(prevState => ({
-      ...prevState,
-      [id]: value
-    }));
-  };
-
-  const fetchCategorias = async () => {
-    try {
-      const response = await fetch('http://localhost:8080/api/categorias');
-      const data = await response.json();
-      setCategorias(data);
-    } catch (error) {
-      console.error("Error al cargar las categorías:", error);
-    }
-  };
-
-  const fetchProductos = async () => {
-    try {
-      const response = await fetch('http://localhost:8080/api/productos');
-      const data = await response.json();
-      setProductos(data);
-    } catch (error) {
-      console.error("Error al cargar los productos:", error);
-    }
-  };
-
-  const crearProducto = async (e) => {
-    e.preventDefault();
-
-    try {
-      const response = await fetch('http://localhost:8080/api/productos', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(nuevoProducto),
-      });
-
-      if (response.ok) {
-        alert('Producto creado con éxito');
-        fetchProductos(); // Recargar productos
-      } else {
-        alert('Error al crear el producto');
-      }
-    } catch (error) {
-      console.error('Error al crear producto:', error);
-      alert('Error al conectar con el servidor');
-    }
-  };
 
   const fetchData = async () => {
     try {
-      await Promise.all([fetchCategorias(), fetchProductos()]);
-      setIsLoading(false);
+      const [categoriasResponse, productosResponse] = await Promise.all([
+        fetch("http://localhost:8080/api/categorias"),
+        fetch("http://localhost:8080/api/productos"),
+      ]);
+
+      const categoriasData = await categoriasResponse.json();
+      const productosData = await productosResponse.json();
+
+      setCategorias(categoriasData);
+      setProductos(productosData);
     } catch (error) {
       console.error("Error al cargar los datos:", error);
+    } finally {
       setIsLoading(false);
     }
   };
@@ -78,81 +47,125 @@ const App = () => {
     fetchData();
   }, []);
 
+  const handleCategoriaClick = (categoriaNombre) => {
+    console.log(`Has hecho click en la categoría: ${categoriaNombre}`);
+  };
+
   return (
-    <div className="App">
-      {isLoading ? (
-        <p>Cargando datos...</p>
-      ) : (
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <div style={{ width: '45%' }}>
-            <h1>Categorías</h1>
-            <ul>
+    <>
+      {/* Barra de navegación */}
+      <AppBar position="sticky" color="secondary">
+        <Toolbar>
+          {/* Logo de la app */}
+          <img src={Logo}  alt="Logo" style={{ height: 50, marginRight: 20 }} />
+          <Typography variant="h6" sx={{ flexGrow: 1 }}></Typography>
+
+          {/* Botones de carrito y perfil */}
+          <IconButton color="inherit">
+            <AddShoppingCartIcon />
+          </IconButton>
+          <IconButton color="inherit">
+            <PersonIcon />
+          </IconButton>
+        </Toolbar>
+      </AppBar>
+
+      <Container sx={{ paddingTop: 4 }}>
+        {isLoading ? (
+          <Grid
+            container
+            justifyContent="center"
+            alignItems="center"
+            style={{ minHeight: "80vh" }}
+          >
+            <CircularProgress />
+          </Grid>
+        ) : (
+          <>
+            {/* Categorías */}
+            <Typography variant="h4" gutterBottom>
+              Categorías
+            </Typography>
+            <Stack
+              direction="row"
+              spacing={2}
+              flexWrap="wrap"
+              sx={{ marginBottom: 4 }}
+            >
               {categorias.length > 0 ? (
                 categorias.map((categoria, index) => (
-                  <li key={index}>{categoria.nombre}</li>
+                  <Chip
+                    key={index}
+                    label={categoria.nombre}
+                    color="secondary"
+                    variant="outlined"
+                    sx={{ fontSize: "1rem" }}
+                    onClick={() => handleCategoriaClick(categoria.nombre)}
+                  />
                 ))
               ) : (
-                <li>No hay categorías disponibles</li>
+                <Typography>No hay categorías disponibles</Typography>
               )}
-            </ul>
-          </div>
+            </Stack>
 
-          <div style={{ width: '45%' }}>
-            <h1>Productos</h1>
-            <ul>
+            {/* Productos */}
+            <Typography variant="h4" gutterBottom>
+              Productos
+            </Typography>
+            <Grid container spacing={3}>
               {productos.length > 0 ? (
                 productos.map((producto, index) => (
-                  <li key={index}>{producto.nombre} - Stock: {producto.stock}</li>
+                  <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+                    <Card
+                      sx={{
+                        height: "100%",
+                        display: "flex",
+                        flexDirection: "column",
+                      }}
+                    >
+                      {/* Imagen aleatoria */}
+                      <CardMedia
+                        component="img"
+                        height="140"
+                        image={`https://picsum.photos/300/200?random=${index}`}
+                        alt="Imagen del producto"
+                      />
+
+                      <CardContent sx={{ flexGrow: 1 }}>
+                        <Typography variant="h6" gutterBottom>
+                          {producto.nombre}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          Stock: {producto.stock}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          Precio: {producto.precio} €
+                        </Typography>
+                      </CardContent>
+
+                      {/* Botones */}
+                      <CardActions sx={{ justifyContent: "space-between" }}>
+                        <Button size="small" color="primary" variant="outlined">
+                          Ver detalles
+                        </Button>
+                        <Button
+                          size="small"
+                          color="secondary"
+                          variant="contained"
+                          startIcon={<AddShoppingCartIcon />}
+                        ></Button>
+                      </CardActions>
+                    </Card>
+                  </Grid>
                 ))
               ) : (
-                <li>No hay productos disponibles</li>
+                <Typography>No hay productos disponibles</Typography>
               )}
-            </ul>
-
-            <form onSubmit={crearProducto}>
-              <p>Crear un producto</p>
-              <p>Nombre:</p>
-              <input
-                type="text"
-                id="nombre"
-                placeholder="Nombre del producto"
-                value={nuevoProducto.nombre}
-                onChange={handleChange}
-              />
-              <p>Stock:</p>
-              <input
-                type="number"
-                id="stock"
-                placeholder="Stock del producto"
-                value={nuevoProducto.stock}
-                onChange={handleChange}
-              />
-              <p>Precio:</p>
-              <input
-                type="number"
-                id="precio"
-                placeholder="Precio del producto"
-                value={nuevoProducto.precio}
-                onChange={handleChange}
-              />
-              <p>Categoría:</p>
-              <select
-                id="categoriaId"
-                value={nuevoProducto.categoria.id}
-                onChange={handleChange}
-              >
-                {categorias.map((categoria, index) => (
-                  <option key={index} value={categoria.id}>
-                    {categoria.nombre}
-                  </option>
-                ))}
-              </select>
-              <button type="submit">Crear Producto</button>
-            </form>
-          </div>
-        </div>
-      )}
-    </div>
+            </Grid>
+          </>
+        )}
+      </Container>
+    </>
   );
 };
 
