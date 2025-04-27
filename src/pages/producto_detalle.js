@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Container, Typography, Card, CardMedia, CardContent, CircularProgress, Button } from "@mui/material";
 
-// TODO: Arreglar que se vean los datos del producto seleccionado
 
 const ProductoDetalle = () => {
   const { id } = useParams();
@@ -68,6 +67,11 @@ const ProductoDetalle = () => {
           </Typography>
         </CardContent>
       </Card>
+
+      <Button variant="outlined" color="secondary" sx={{ mb: 2 }} onClick={() => navigate(-1)}>
+        Comprar
+      </Button>
+
     </Container>
   );
 };

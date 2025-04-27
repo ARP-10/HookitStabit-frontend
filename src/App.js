@@ -124,7 +124,7 @@ const Home = () => {
                           size="small"
                           color="primary"
                           variant="outlined"
-                          onClick={() => navigate(`/producto/${producto.id}`)} // 👈
+                          onClick={() => navigate(`/api/productos/${producto.id}`)} // 👈
                         >
                           Ver detalles
                         </Button>
@@ -155,10 +155,14 @@ const App = () => {
       <AppBar position="sticky" color="secondary">
         <Toolbar>
           <img src={Logo} alt="Logo" style={{ height: 50, marginRight: 20 }} />
+          
+          
           <Typography variant="h6" sx={{ flexGrow: 1 }}></Typography>
           <IconButton color="inherit">
             <AddShoppingCartIcon />
           </IconButton>
+
+         
           <IconButton color="inherit">
             <PersonIcon />
           </IconButton>
