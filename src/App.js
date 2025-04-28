@@ -1,8 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
 import {
-  Container,
+  AppBar,
+  Toolbar,
   Typography,
+  IconButton,
+  Container,
   CircularProgress,
   Grid,
   Stack,
@@ -12,9 +15,6 @@ import {
   CardMedia,
   Button,
   CardActions,
-  AppBar,
-  Toolbar,
-  IconButton,
 } from "@mui/material";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import PersonIcon from "@mui/icons-material/Person";
@@ -23,11 +23,11 @@ import ProductoDetalle from "./pages/producto_detalle";
 import ProductoNuevo from "./pages/producto_nuevo";
 
 const Home = () => {
-  const [categorias, setCategorias] = useState([]);
-  const [productos, setProductos] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [categorias, setCategorias] = React.useState([]);
+  const [productos, setProductos] = React.useState([]);
+  const [isLoading, setIsLoading] = React.useState(true);
 
-  const navigate = useNavigate(); 
+  const navigate = useNavigate(); // Colocado dentro de un componente envuelto por <Router>
 
   const fetchData = async () => {
     try {
@@ -48,7 +48,7 @@ const Home = () => {
     }
   };
 
-  useEffect(() => {
+  React.useEffect(() => {
     fetchData();
   }, []);
 
@@ -64,7 +64,6 @@ const Home = () => {
         </Grid>
       ) : (
         <>
-          {/* Categorías */}
           <Typography variant="h4" gutterBottom>
             Categorías
           </Typography>
@@ -85,7 +84,6 @@ const Home = () => {
             )}
           </Stack>
 
-          {/* Productos */}
           <Typography variant="h4" gutterBottom>
             Productos
           </Typography>
@@ -93,20 +91,13 @@ const Home = () => {
             {productos.length > 0 ? (
               productos.map((producto, index) => (
                 <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
-                  <Card
-                    sx={{
-                      height: "100%",
-                      display: "flex",
-                      flexDirection: "column",
-                    }}
-                  >
+                  <Card sx={{ height: "100%", display: "flex", flexDirection: "column" }}>
                     <CardMedia
                       component="img"
                       height="140"
-                      image={`https://picsum.photos/300/200?random=${index}`}
-                      alt="Imagen del producto"
+                      image={`https://picsum.photos/300/200?random=${index}`} 
+                      alt={`Imagen del producto ${index}`}
                     />
-
                     <CardContent sx={{ flexGrow: 1 }}>
                       <Typography variant="h6" gutterBottom>
                         {producto.nombre}
@@ -118,13 +109,12 @@ const Home = () => {
                         Precio: {producto.precio} €
                       </Typography>
                     </CardContent>
-
                     <CardActions sx={{ justifyContent: "space-between" }}>
                       <Button
                         size="small"
                         color="primary"
                         variant="outlined"
-                        onClick={() => navigate(`/api/productos/${producto.id}`)} // 👈
+                        onClick={() => navigate(`/api/productos/${producto.id}`)}
                       >
                         Ver detalles
                       </Button>
@@ -148,32 +138,38 @@ const Home = () => {
   );
 };
 
-const App = () => {
-  const navigate = useNavigate();  // Usar useNavigate aquí
+const AppBarWithNavigation = () => {
+  const navigate = useNavigate();
 
   return (
+    <AppBar position="sticky" color="secondary">
+      <Toolbar sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+    {/* Logotipo */}
+    <img src={Logo} alt="Logo" style={{ height: 50 }} />
+
+    {/* Iconos alineados a la derecha */}
+    <div>
+      <IconButton color="inherit">
+        <AddShoppingCartIcon />
+      </IconButton>
+
+      <IconButton color="inherit" onClick={() => navigate("/api/productos/producto_nuevo")}>
+        <PersonIcon />
+      </IconButton>
+    </div>
+  </Toolbar>
+    </AppBar>
+  );
+};
+
+const App = () => {
+  return (
     <Router>
-      <AppBar position="sticky" color="secondary">
-        <Toolbar>
-          <img src={Logo} alt="Logo" style={{ height: 50, marginRight: 20 }} />
-          
-          <Typography variant="h6" sx={{ flexGrow: 1 }}></Typography>
-          
-          <IconButton color="inherit">
-            <AddShoppingCartIcon />
-          </IconButton>
-
-          {/* Mover el navigate dentro de App */}
-          <IconButton color="inherit" onClick={() => navigate('/producto_nuevo')}>
-            <PersonIcon />
-          </IconButton>
-        </Toolbar>
-      </AppBar>
-
+      <AppBarWithNavigation />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/api/productos/:id" element={<ProductoDetalle />} />
-        <Route path="/producto_nuevo" element={<ProductoNuevo />} />
+        <Route path="/api/productos/producto_nuevo" element={<ProductoNuevo />} />
       </Routes>
     </Router>
   );
