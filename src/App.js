@@ -59,6 +59,7 @@ const Home = () => {
   return (
     <Container sx={{ paddingTop: 4 }}>
       {isLoading ? (
+        // Muestra un spinner de carga si los datos no han llegado
         <Grid container justifyContent="center" alignItems="center" style={{ minHeight: "80vh" }}>
           <CircularProgress />
         </Grid>
@@ -97,6 +98,7 @@ const Home = () => {
                       height="140"
                       image={`https://picsum.photos/300/200?random=${index}`} 
                       alt={`Imagen del producto ${index}`}
+                      sx={{ width: 300, height: 200, objectFit: "cover", alignSelf: "center" }}
                     />
                     <CardContent sx={{ flexGrow: 1 }}>
                       <Typography variant="h6" gutterBottom>
