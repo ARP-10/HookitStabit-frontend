@@ -5,49 +5,45 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import Logo from "../assets/Logo.png";
-import Registro from "./Registro_usuario";
 
-const Login = () => {
+const Registro = () => {
   const navigate = useNavigate();
+  const [nombre, setNombre] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [nombreError, setNombreError] = useState(false);
   const [emailError, setEmailError] = useState(false);
   const [passwordError, setPasswordError] = useState(false);
 
-  const handleEntrar = async () => {
+  const handleRegistrarse = async () => {
     try {
       // Resetear errores
+      setNombreError(false);
       setEmailError(false);
       setPasswordError(false);
-  
-      const response = await fetch("http://localhost:8080/api/login/validar", {
+
+      const response = await fetch("http://localhost:8080/api/login/nuevo", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ nombre, email, password }),
       });
-  
+
       if (response.ok) {
-        const user = await response.json();
-        console.log("Login correcto:", user);
+        console.log("Usuario creado correctamente");
         navigate("/home");
-      } else if (response.status === 401) {
+      } else {
         const motivo = await response.text();
         
-        // Ajustar errores específicos
+        // Manejo de errores basado en la respuesta del backend
+        setNombreError(motivo === "nombre");
         setEmailError(motivo === "email");
         setPasswordError(motivo === "password");
-  
-      } else {
-        alert("Error inesperado al intentar iniciar sesión.");
       }
     } catch (error) {
-      console.error("Error de login:", error);
+      console.error("Error al registrar usuario:", error);
       alert("Error de conexión con el servidor.");
     }
-  };  
-
-  const handleEntrarSinLogin = () => navigate("/home");
-  const handleRegistrarse = () => navigate("/registro");
+  };
 
   return (
     <Container sx={{ paddingTop: 4 }}>
@@ -56,13 +52,22 @@ const Login = () => {
       <Box maxWidth={300} mx="auto" mt={4}>
         <Stack spacing={2}>
           <TextField
+            label="Nombre"
+            variant="outlined"
+            fullWidth
+            value={nombre}
+            onChange={(e) => setNombre(e.target.value)}
+            error={nombreError}
+            helperText={nombreError ? "El nombre es obligatorio." : ""}
+          />
+          <TextField
             label="Correo electrónico"
             variant="outlined"
             fullWidth
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             error={emailError}
-            helperText={emailError ? "Correo no registrado." : ""}
+            helperText={emailError ? "Correo no válido o ya registrado." : ""}
           />
           <TextField
             label="Contraseña"
@@ -72,24 +77,21 @@ const Login = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             error={passwordError}
-            helperText={passwordError ? "Contraseña incorrecta." : ""}
+            helperText={passwordError ? "Contraseña inválida." : ""}
           />
-          <Button variant="contained" color="primary" size="small" onClick={handleEntrar}>
-            Entrar
-          </Button>
-          <Button variant="contained" color="secondary" size="small" onClick={handleEntrarSinLogin}>
-            Entrar sin logearse
+          <Button variant="contained" color="primary" size="small" onClick={handleRegistrarse}>
+            Registrarse
           </Button>
 
           <Typography variant="body2" align="center" mt={2}>
-            ¿No tienes cuenta?{" "}
+            ¿Ya tienes una cuenta?{" "}
             <Link
               component="button"
               variant="body2"
-              onClick={handleRegistrarse}
+              onClick={() => navigate("/login")}
               sx={{ cursor: "pointer", color: "secondary.main" }}
             >
-              Regístrate aquí
+              Inicia sesión aquí
             </Link>
           </Typography>
         </Stack>
@@ -98,4 +100,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Registro;
