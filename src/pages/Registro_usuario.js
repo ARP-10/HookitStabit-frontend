@@ -88,7 +88,7 @@ const Registro = () => {
             <Link
               component="button"
               variant="body2"
-              onClick={() => navigate("/login")}
+              onClick={() => navigate("/")}
               sx={{ cursor: "pointer", color: "secondary.main" }}
             >
               Inicia sesión aquí

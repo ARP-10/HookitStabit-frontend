@@ -5,7 +5,6 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import Logo from "../assets/Logo.png";
-import Registro from "./Registro_usuario";
 
 const Login = () => {
   const navigate = useNavigate();
