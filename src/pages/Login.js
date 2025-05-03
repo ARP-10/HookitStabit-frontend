@@ -14,41 +14,45 @@ const Login = () => {
   const [passwordError, setPasswordError] = useState(false);
 
   const handleEntrar = async () => {
-    try {
-      // Resetear errores
-      setEmailError(false);
-      setPasswordError(false);
-  
-      const response = await fetch("http://localhost:8080/api/login/validar", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-  
-      if (response.ok) {
-        const user = await response.json();
-        console.log("Login correcto:", user);
+  try {
+    // Resetear errores
+    setEmailError(false);
+    setPasswordError(false);
 
-        // Guardamos el user logeado en localstorage
+    const response = await fetch("http://localhost:8080/api/login/validar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+
+    if (response.ok) {
+      const user = await response.json();
+      console.log("Login correcto:", user);
+
+      // Verifica si el usuario tiene el id
+      if (user && user.id) {
         localStorage.setItem("usuarioLogueado", JSON.stringify(user));
-
-
+        localStorage.setItem("usuarioId", user.id);
         navigate("/home");
-      } else if (response.status === 401) {
-        const motivo = await response.text();
-        
-        // Ajustar errores específicos
-        setEmailError(motivo === "email");
-        setPasswordError(motivo === "password");
-  
       } else {
-        alert("Error inesperado al intentar iniciar sesión.");
+        console.error("No se encontró el ID del usuario:", user);
+        alert("Error al iniciar sesión. No se encontró el ID del usuario.");
       }
-    } catch (error) {
-      console.error("Error de login:", error);
-      alert("Error de conexión con el servidor.");
+    } else if (response.status === 401) {
+      const motivo = await response.text();
+      
+      // Ajustar errores específicos
+      setEmailError(motivo === "email");
+      setPasswordError(motivo === "password");
+    } else {
+      alert("Error inesperado al intentar iniciar sesión.");
     }
-  };  
+  } catch (error) {
+    console.error("Error de login:", error);
+    alert("Error de conexión con el servidor.");
+  }
+};
+  
 
   const handleEntrarSinLogin = () => navigate("/home");
   const handleRegistrarse = () => navigate("/registro");

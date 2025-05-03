@@ -1,8 +1,27 @@
 import React from "react";
-import { Drawer, List, ListItem, ListItemText, Divider } from "@mui/material";
-import { Link } from "react-router-dom"; // Para navegación entre páginas
+import {
+  Drawer,
+  List,
+  ListItem,
+  ListItemText,
+  Divider,
+  Toolbar,
+} from "@mui/material";
+import { Link, useNavigate } from "react-router-dom";
 
 const MenuLateral = () => {
+  const navigate = useNavigate();
+
+  // Función para cerrar sesión
+  const handleCerrarSesion = () => {
+    // Limpiar localStorage
+    localStorage.removeItem("usuarioLogueado");
+    localStorage.removeItem("usuarioId");
+
+    // Redirigir al login
+    navigate("/login");
+  };
+
   return (
     <Drawer
       sx={{
@@ -13,15 +32,43 @@ const MenuLateral = () => {
           boxSizing: "border-box",
         },
       }}
-      variant="permanent" // Hace que el Drawer siempre esté visible
+      variant="permanent"
       anchor="left"
     >
+      {/* Este Toolbar vacío sirve como espacio para que el drawer no se solape con el AppBar */}
+      <Toolbar />
       <List>
-        <ListItem button component={Link} to="http://localhost:3000/api/productos/producto_nuevo">
+        <ListItem button component={Link} to="/perfil">
+          <ListItemText primary="Info perfil" />
+        </ListItem>
+        <Divider />
+        <ListItem button component={Link} to="/api/productos/producto_nuevo">
+          <ListItemText primary="Mis productos" />
+        </ListItem>
+        <Divider />
+
+        <ListItem button component={Link} to="/api/productos/producto_nuevo">
           <ListItemText primary="Nuevo Producto" />
         </ListItem>
         <Divider />
-        {/* Puedes agregar más items en el futuro aquí */}
+        <ListItem button component={Link} to="/api/productos/producto_nuevo">
+          <ListItemText primary="Logros" />
+        </ListItem>
+        <Divider />
+        <ListItem button component={Link} to="/api/productos/producto_nuevo">
+          <ListItemText primary="Mis compras" />
+        </ListItem>
+        <Divider />
+        <ListItem button component={Link} to="/api/productos/producto_nuevo">
+          <ListItemText primary="Mis ventas" />
+        </ListItem>
+        <Divider />
+
+        {/* Botón de cerrar sesión */}
+        <ListItem button onClick={handleCerrarSesion}>
+          <ListItemText primary="Cerrar sesión" />
+        </ListItem>
+        <Divider />
       </List>
     </Drawer>
   );
