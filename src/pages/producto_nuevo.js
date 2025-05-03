@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Container,
@@ -9,6 +9,8 @@ import {
   OutlinedInput,
   InputAdornment,
   Button,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import MenuLateral from "../components/MenuLateral";
 
@@ -17,33 +19,44 @@ const ProductoNuevo = () => {
   const [categoriaId, setCategoriaId] = useState("");
   const [precio, setPrecio] = useState("");
   const [stock, setStock] = useState("");
+  const [categorias, setCategorias] = useState([]);
 
-  // Obtener el ID del usuario logueado desde localStorage
   const usuarioId = localStorage.getItem("usuarioId");
-
-  // Verifica si el ID está disponible, si no, usa un valor por defecto
   const usuario = usuarioId ? parseInt(usuarioId, 10) : 1;
+
+  // Cargar categorías al montar el componente
+  useEffect(() => {
+    const fetchCategorias = async () => {
+      try {
+        const res = await fetch("http://localhost:8080/api/categorias");
+        if (res.ok) {
+          const data = await res.json();
+          setCategorias(data);
+        } else {
+          console.error("Error al cargar categorías");
+        }
+      } catch (error) {
+        console.error("Error al conectar con el servidor:", error);
+      }
+    };
+
+    fetchCategorias();
+  }, []);
 
   const handleSubmit = async () => {
     const nuevoProducto = {
-      nombre: nombre,
+      nombre,
       precio: parseFloat(precio),
       stock: parseInt(stock),
       disponible: true,
-      usuario: {
-        id: usuario, // Usar el ID del usuario logueado
-      },
-      categoria: {
-        id: parseInt(categoriaId),
-      },
+      usuario: { id: usuario },
+      categoria: { id: parseInt(categoriaId) },
     };
 
     try {
       const response = await fetch("http://localhost:8080/api/productos", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(nuevoProducto),
       });
 
@@ -64,13 +77,12 @@ const ProductoNuevo = () => {
 
   return (
     <Box sx={{ display: "flex" }}>
-      <MenuLateral /> {/* Menú lateral fijo a la izquierda */}
+      <MenuLateral />
       <Container sx={{ paddingTop: 4 }}>
         <Typography variant="h4" gutterBottom>
           Nuevo Producto
         </Typography>
 
-        {/* Nombre */}
         <FormControl fullWidth sx={{ mb: 2 }}>
           <TextField
             label="Nombre"
@@ -80,17 +92,23 @@ const ProductoNuevo = () => {
           />
         </FormControl>
 
-        {/* Categoria */}
+        {/* Categoría como desplegable */}
         <FormControl fullWidth sx={{ mb: 2 }}>
-          <TextField
-            label="ID Categoría"
-            variant="outlined"
+          <InputLabel id="categoria-label">Categoría</InputLabel>
+          <Select
+            labelId="categoria-label"
             value={categoriaId}
+            label="Categoría"
             onChange={(e) => setCategoriaId(e.target.value)}
-          />
+          >
+            {categorias.map((cat) => (
+              <MenuItem key={cat.id} value={cat.id}>
+                {cat.nombre}
+              </MenuItem>
+            ))}
+          </Select>
         </FormControl>
 
-        {/* Precio */}
         <FormControl fullWidth sx={{ mb: 2 }}>
           <InputLabel htmlFor="precio">Precio</InputLabel>
           <OutlinedInput
@@ -103,7 +121,6 @@ const ProductoNuevo = () => {
           />
         </FormControl>
 
-        {/* Stock */}
         <FormControl fullWidth sx={{ mb: 2 }}>
           <InputLabel htmlFor="stock">Stock</InputLabel>
           <OutlinedInput
@@ -115,7 +132,6 @@ const ProductoNuevo = () => {
           />
         </FormControl>
 
-        {/* Botón crear producto */}
         <Button variant="contained" color="primary" onClick={handleSubmit}>
           Crear Producto
         </Button>

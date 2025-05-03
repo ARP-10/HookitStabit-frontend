@@ -19,7 +19,7 @@ const MenuLateral = () => {
     localStorage.removeItem("usuarioId");
 
     // Redirigir al login
-    navigate("/login");
+    navigate("/");
   };
 
   return (
@@ -42,7 +42,7 @@ const MenuLateral = () => {
           <ListItemText primary="Info perfil" />
         </ListItem>
         <Divider />
-        <ListItem button component={Link} to="/api/productos/producto_nuevo">
+        <ListItem button component={Link} to="/api/productos/productos_usuario">
           <ListItemText primary="Mis productos" />
         </ListItem>
         <Divider />
