@@ -28,6 +28,11 @@ const Login = () => {
       if (response.ok) {
         const user = await response.json();
         console.log("Login correcto:", user);
+
+        // Guardamos el user logeado en localstorage
+        localStorage.setItem("usuarioLogueado", JSON.stringify(user));
+
+
         navigate("/home");
       } else if (response.status === 401) {
         const motivo = await response.text();
