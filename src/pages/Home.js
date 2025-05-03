@@ -14,7 +14,7 @@ import {
   CardActions,
 } from "@mui/material";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
-import useUsuarioLogueado from "../hooks/UsuarioLogueado";
+import useUsuarioLogueado from "../hooks/useUsuarioLogueado";
 
 const Home = () => {
   const [categorias, setCategorias] = React.useState([]);

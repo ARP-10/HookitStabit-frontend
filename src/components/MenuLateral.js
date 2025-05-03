@@ -17,7 +17,7 @@ const MenuLateral = () => {
       anchor="left"
     >
       <List>
-        <ListItem button component={Link} to="/producto_nuevo">
+        <ListItem button component={Link} to="http://localhost:3000/api/productos/producto_nuevo">
           <ListItemText primary="Nuevo Producto" />
         </ListItem>
         <Divider />

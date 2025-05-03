@@ -26,7 +26,7 @@ const NavBar = () => {
           <AddShoppingCartIcon />
         </IconButton>
   
-        <IconButton color="inherit" onClick={() => navigate("/api/productos/producto_nuevo")}>
+        <IconButton color="inherit" onClick={() => navigate("/perfil")}>
           <PersonIcon />
         </IconButton>
       </div>

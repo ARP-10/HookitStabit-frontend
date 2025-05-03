@@ -6,6 +6,7 @@ import Login from "./pages/Login";
 import Registro from "./pages/Registro_usuario";
 import NavBar from "./components/NavBar";
 import Home from "./pages/Home";
+import Perfil from "./pages/Perfil";
 
 const AppContent = () => {
   const location = useLocation();
@@ -20,6 +21,7 @@ const AppContent = () => {
         <Route path="/" element={<Login />} />
         <Route path="/home" element={<Home />} />
         <Route path="/registro" element={<Registro />} />
+        <Route path="/perfil" element={<Perfil />} />
         <Route path="/api/productos/:id" element={<ProductoDetalle />} />
         <Route path="/api/productos/producto_nuevo" element={<ProductoNuevo />} />
       </Routes>
