@@ -8,7 +8,7 @@ const usePerfil = () => {
   useEffect(() => {
     const fetchPerfil = async () => {
       try {
-        const usuarioGuardado = localStorage.getItem("usuarioLogueado");
+        const usuarioGuardado = sessionStorage.getItem("usuarioLogueado");
         if (!usuarioGuardado) throw new Error("Usuario no logueado");
 
         const { id } = JSON.parse(usuarioGuardado);

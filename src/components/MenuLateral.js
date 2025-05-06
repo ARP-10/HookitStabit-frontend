@@ -14,7 +14,7 @@ const MenuLateral = () => {
 
   // Función para cerrar sesión
   const handleCerrarSesion = () => {
-    // Limpiar localStorage
+    // Limpiar sessionStorage
     sessionStorage.removeItem("usuarioLogueado");
     sessionStorage.removeItem("usuarioId");
 
