@@ -24,7 +24,7 @@ const AppContent = () => {
         <Route path="/home" element={<Home />} />
         <Route path="/registro" element={<Registro />} />
         <Route path="/perfil" element={<Perfil />} />
-        <Route path="/api/productos/:id" element={<ProductoDetalle />} /> {/* Ruta de detalle */}
+        <Route path="/api/productos/detalles/:id" element={<ProductoDetalle />} /> {/* Ruta de detalle */}
         <Route path="/api/productos/actualizar/:id" element={<ProductoEditar />} /> {/* Ruta de actualización */}
         <Route path="/api/productos/producto_nuevo" element={<ProductoNuevo />} />
         <Route path="/api/productos/productos_usuario" element={<MisProductos />} />

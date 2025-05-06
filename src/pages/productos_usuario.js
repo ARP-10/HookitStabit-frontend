@@ -8,7 +8,7 @@ const MisProductos = () => {
   const navigate = useNavigate();
 
   // Obtener el ID del usuario logueado desde localStorage
-  const usuarioId = localStorage.getItem("usuarioId");
+  const usuarioId = sessionStorage.getItem("usuarioId");
 
   useEffect(() => {
     // Obtener los productos del usuario logueado

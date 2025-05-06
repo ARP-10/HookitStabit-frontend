@@ -20,9 +20,10 @@ const Home = () => {
   const [categorias, setCategorias] = React.useState([]);
   const [productos, setProductos] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(true);
+  const [categoriaSeleccionada, setCategoriaSeleccionada] =
+    React.useState(null);
 
   const usuario = useUsuarioLogueado();
-
   const navigate = useNavigate(); // Colocado dentro de un componente envuelto por <Router>
 
   const fetchData = async () => {
@@ -48,14 +49,21 @@ const Home = () => {
     fetchData();
   }, []);
 
-  const handleCategoriaClick = (categoriaNombre) => {
-    console.log(`Has hecho click en la categoría: ${categoriaNombre}`);
+  const handleCategoriaClick = (idCategoria) => {
+    setCategoriaSeleccionada((prevId) =>
+      prevId === idCategoria ? null : idCategoria
+    );
   };
+
+  const productosFiltrados = categoriaSeleccionada
+    ? productos.filter(
+        (producto) => producto.categoria?.id === categoriaSeleccionada
+      )
+    : productos;
 
   return (
     <Container sx={{ paddingTop: 4 }}>
       {isLoading ? (
-        // Muestra un spinner de carga si los datos no han llegado
         <Grid
           container
           justifyContent="center"
@@ -92,24 +100,71 @@ const Home = () => {
             </Typography>
           </Typography>
 
-          <Typography variant="h4" gutterBottom>
-            Categorías
-          </Typography>
+        
           <Stack
             direction="row"
             spacing={2}
             flexWrap="wrap"
-            sx={{ marginBottom: 4 }}
+            sx={{ marginBottom: 4, justifyContent: "center" }}
           >
+            {/* Botón "Ver todos" */}
+            <Chip
+              label="Ver todos"
+              color={categoriaSeleccionada === null ? "primary" : "default"}
+              variant="filled"
+              sx={{
+                fontSize: "1rem",
+                fontWeight: "bold",
+                padding: "10px 14px",
+                borderRadius: "20px",
+                cursor: "pointer",
+                backgroundColor:
+                  categoriaSeleccionada === null ? "#9c27b0" : "#f3e5f5",
+                color: categoriaSeleccionada === null ? "#ffffff" : "#4a148c",
+                transition: "0.3s",
+                "&:hover": {
+                  backgroundColor:
+                    categoriaSeleccionada === null ? "#7b1fa2" : "#e1bee7",
+                },
+              }}
+              onClick={() => setCategoriaSeleccionada(null)} // Al hacer clic, muestra todos los productos
+            />
+
+            {/* Botones de categorías */}
             {categorias.length > 0 ? (
               categorias.map((categoria, index) => (
                 <Chip
                   key={index}
                   label={categoria.nombre}
-                  color="secondary"
-                  variant="outlined"
-                  sx={{ fontSize: "1rem" }}
-                  onClick={() => handleCategoriaClick(categoria.nombre)}
+                  color={
+                    categoriaSeleccionada === categoria.id
+                      ? "primary"
+                      : "default"
+                  }
+                  variant="filled"
+                  sx={{
+                    fontSize: "1rem",
+                    fontWeight: "bold",
+                    padding: "10px 14px",
+                    borderRadius: "20px",
+                    cursor: "pointer",
+                    backgroundColor:
+                      categoriaSeleccionada === categoria.id
+                        ? "#9c27b0"
+                        : "#f3e5f5",
+                    color:
+                      categoriaSeleccionada === categoria.id
+                        ? "#ffffff"
+                        : "#4a148c",
+                    transition: "0.3s",
+                    "&:hover": {
+                      backgroundColor:
+                        categoriaSeleccionada === categoria.id
+                          ? "#7b1fa2"
+                          : "#e1bee7",
+                    },
+                  }}
+                  onClick={() => handleCategoriaClick(categoria.id)}
                 />
               ))
             ) : (
@@ -117,12 +172,10 @@ const Home = () => {
             )}
           </Stack>
 
-          <Typography variant="h4" gutterBottom>
-            Productos
-          </Typography>
+          
           <Grid container spacing={3}>
-            {productos.length > 0 ? (
-              productos.map((producto, index) => (
+            {productosFiltrados.length > 0 ? (
+              productosFiltrados.map((producto, index) => (
                 <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
                   <Card
                     sx={{
@@ -160,7 +213,7 @@ const Home = () => {
                         color="primary"
                         variant="outlined"
                         onClick={() =>
-                          navigate(`/api/productos/${producto.id}`)
+                          navigate(`/api/productos/detalles/${producto.id}`)
                         }
                       >
                         Ver detalles
@@ -176,7 +229,9 @@ const Home = () => {
                 </Grid>
               ))
             ) : (
-              <Typography>No hay productos disponibles</Typography>
+              <Typography>
+                No hay productos disponibles en esta categoría
+              </Typography>
             )}
           </Grid>
         </>
