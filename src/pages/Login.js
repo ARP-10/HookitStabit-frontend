@@ -31,8 +31,8 @@ const Login = () => {
 
       // Verifica si el usuario tiene el id
       if (user && user.id) {
-        localStorage.setItem("usuarioLogueado", JSON.stringify(user));
-        localStorage.setItem("usuarioId", user.id);
+        sessionStorage.setItem("usuarioLogueado", JSON.stringify(user));
+        sessionStorage.setItem("usuarioId", user.id);
         navigate("/home");
       } else {
         console.error("No se encontró el ID del usuario:", user);

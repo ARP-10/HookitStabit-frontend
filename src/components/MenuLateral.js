@@ -15,8 +15,8 @@ const MenuLateral = () => {
   // Función para cerrar sesión
   const handleCerrarSesion = () => {
     // Limpiar localStorage
-    localStorage.removeItem("usuarioLogueado");
-    localStorage.removeItem("usuarioId");
+    sessionStorage.removeItem("usuarioLogueado");
+    sessionStorage.removeItem("usuarioId");
 
     // Redirigir al login
     navigate("/");

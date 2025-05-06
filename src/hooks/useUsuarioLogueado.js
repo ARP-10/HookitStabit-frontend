@@ -4,7 +4,7 @@ const useUsuarioLogueado = () => {
   const [usuario, setUsuario] = useState(null);
 
   useEffect(() => {
-    const user = localStorage.getItem("usuarioLogueado");
+    const user = sessionStorage.getItem("usuarioLogueado");
     if (user) setUsuario(JSON.parse(user));
   }, []);
 

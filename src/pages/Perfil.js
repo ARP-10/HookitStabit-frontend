@@ -29,7 +29,7 @@ const Perfil = () => {
     };
 
     try {
-      const response = await fetch(`http://localhost:8080/api/usuarios/${usuario.id}`, {
+      const response = await fetch(`http://localhost:8080/api/perfil/${usuario.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(actualizado),
