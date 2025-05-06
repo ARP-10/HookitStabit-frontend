@@ -24,7 +24,7 @@ const ProductoEditar = () => {
   useEffect(() => {
     // Obtener el producto actual por ID
     const fetchProducto = async () => {
-      const response = await fetch(`http://localhost:8080/api/productos/${id}`);
+      const response = await fetch(`http://localhost:8080/api/productos/detalles/${id}`);
       if (response.ok) {
         const data = await response.json();
         setProducto(data);

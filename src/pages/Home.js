@@ -28,16 +28,18 @@ const Home = () => {
 
   const fetchData = async () => {
     try {
-      const [categoriasResponse, productosResponse] = await Promise.all([
-        fetch("http://localhost:8080/api/categorias"),
-        fetch("http://localhost:8080/api/productos"),
-      ]);
-
+      // Obtener categorías (no depende del usuario)
+      const categoriasResponse = await fetch("http://localhost:8080/api/categorias");
       const categoriasData = await categoriasResponse.json();
-      const productosData = await productosResponse.json();
-
       setCategorias(categoriasData);
-      setProductos(productosData);
+  
+      // Si hay usuario, obtener productos excluyendo los suyos
+      if (usuario) {
+        const productosResponse = await fetch(`http://localhost:8080/api/productos/${usuario.id}`);
+        const productosData = await productosResponse.json();
+        setProductos(productosData);
+      }
+  
     } catch (error) {
       console.error("Error al cargar los datos:", error);
     } finally {
@@ -47,7 +49,7 @@ const Home = () => {
 
   React.useEffect(() => {
     fetchData();
-  }, []);
+  }, [usuario]);
 
   const handleCategoriaClick = (idCategoria) => {
     setCategoriaSeleccionada((prevId) =>
