@@ -10,7 +10,6 @@ import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import PersonIcon from "@mui/icons-material/Person";
 import Logo from "../assets/Logopeque.png";
 
-//TODO: Crear boton de cerrar sesion
 const NavBar = () => {
   const navigate = useNavigate();
 
@@ -34,7 +33,7 @@ const NavBar = () => {
 
         {/* Iconos alineados a la derecha */}
         <div>
-          <IconButton color="inherit">
+          <IconButton color="inherit" onClick={() => navigate("/carrito")}>
             <AddShoppingCartIcon />
           </IconButton>
 
