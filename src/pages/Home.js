@@ -32,14 +32,14 @@ const Home = () => {
       const categoriasResponse = await fetch("http://localhost:8080/api/categorias");
       const categoriasData = await categoriasResponse.json();
       setCategorias(categoriasData);
-  
+
       // Si hay usuario, obtener productos excluyendo los suyos
       if (usuario) {
         const productosResponse = await fetch(`http://localhost:8080/api/productos/${usuario.id}`);
         const productosData = await productosResponse.json();
         setProductos(productosData);
       }
-  
+
     } catch (error) {
       console.error("Error al cargar los datos:", error);
     } finally {
@@ -49,6 +49,7 @@ const Home = () => {
 
   React.useEffect(() => {
     fetchData();
+    // eslint-disable-next-line
   }, [usuario]);
 
   const handleCategoriaClick = (idCategoria) => {
@@ -59,8 +60,8 @@ const Home = () => {
 
   const productosFiltrados = categoriaSeleccionada
     ? productos.filter(
-        (producto) => producto.categoria?.id === categoriaSeleccionada
-      )
+      (producto) => producto.categoria?.id === categoriaSeleccionada
+    )
     : productos;
 
   return (
@@ -102,7 +103,7 @@ const Home = () => {
             </Typography>
           </Typography>
 
-        
+
           <Stack
             direction="row"
             spacing={2}
@@ -174,8 +175,8 @@ const Home = () => {
             )}
           </Stack>
 
-          
-          <Grid container spacing={3}>
+
+          <Grid container spacing={3} justifyContent="center" alignItems="center">
             {productosFiltrados.length > 0 ? (
               productosFiltrados.map((producto, index) => (
                 <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
@@ -211,7 +212,7 @@ const Home = () => {
                     </CardContent>
                     <CardActions sx={{ justifyContent: "space-between" }}>
                       <Button
-                        size="small"
+                        size="medium"
                         color="primary"
                         variant="outlined"
                         onClick={() =>
@@ -224,8 +225,10 @@ const Home = () => {
                         size="small"
                         color="secondary"
                         variant="contained"
-                        startIcon={<AddShoppingCartIcon />}
-                      />
+                        sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
+                      >
+                        <AddShoppingCartIcon />
+                      </Button>
                     </CardActions>
                   </Card>
                 </Grid>
